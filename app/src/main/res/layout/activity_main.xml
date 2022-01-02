@@ -6,6 +6,49 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/ig_icon"
+        android:layout_centerInParent="true"
+        android:id="@+id/iconImage"
+        android:visibility="visible"
+      />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:id="@+id/linearLayout">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:src="@drawable/ig_logo"
+           />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/button_background"
+            android:text="@string/log_in"
+            android:textAllCaps="false"
+            android:id="@+id/login"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="10dp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/button_background"
+            android:text="@string/register"
+            android:textAllCaps="false"
+            android:id="@+id/register"/>
+
+
+
+    </LinearLayout>
 
 </RelativeLayout>
