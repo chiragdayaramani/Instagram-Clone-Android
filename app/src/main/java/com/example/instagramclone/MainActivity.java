@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.instagramclone.databinding.ActivityMainBinding;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +71,17 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onAnimationRepeat(Animation animation) {
 
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+            Intent intent=new Intent(MainActivity.this,MainActivity2.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

@@ -7,6 +7,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="already_a_user_login">Already a user? Login</string>
+    <string name="new_to_instagram_register">New to Instagram? Register</string>
 
 
 </resources>

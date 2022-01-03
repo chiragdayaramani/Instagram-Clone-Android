@@ -14,4 +14,5 @@
     <color name="colorAccent">#C2BDBF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="darker_grey">#A1A1A1</color>
 </resources>

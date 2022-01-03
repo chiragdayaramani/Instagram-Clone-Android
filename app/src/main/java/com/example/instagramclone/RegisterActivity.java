@@ -3,6 +3,7 @@ package com.example.instagramclone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     ActivityRegisterBinding binding;
     private DatabaseReference mRootRef;
     private FirebaseAuth mAuth;
+    ProgressDialog pd;
 
 
     @Override
@@ -38,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         mRootRef= FirebaseDatabase.getInstance("https://instagram-clone-847e3-default-rtdb.firebaseio.com/").getReference();
         mAuth=FirebaseAuth.getInstance();
+        pd=new ProgressDialog(this);
 
         binding.loginUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +74,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser(String username, String name, String email, String password) {
+        pd.setMessage("Please Wait!!");
+        pd.show();
+
         mAuth.createUserWithEmailAndPassword(email,password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
@@ -83,7 +89,8 @@ public class RegisterActivity extends AppCompatActivity {
                 mRootRef.child("Users").child(mAuth.getCurrentUser().getUid()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isComplete()){
+                        if(task.isSuccessful()){
+                            pd.dismiss();
                             Toast.makeText(RegisterActivity.this, "Update your profile for better experience", Toast.LENGTH_SHORT).show();
 
                             Intent intent=new Intent(RegisterActivity.this,MainActivity2.class);
@@ -92,16 +99,12 @@ public class RegisterActivity extends AppCompatActivity {
                             finish();
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
                 });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                pd.dismiss();
                 Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
