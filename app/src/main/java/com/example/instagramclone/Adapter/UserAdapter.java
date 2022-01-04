@@ -59,7 +59,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         isFollowed(user.getId(),holder.btnFollow);
 
-        if(user.getId()==firebaseUser.getUid()){
+        if(user.getId().equals(firebaseUser.getUid())){
             holder.btnFollow.setVisibility(View.GONE);
         }
 

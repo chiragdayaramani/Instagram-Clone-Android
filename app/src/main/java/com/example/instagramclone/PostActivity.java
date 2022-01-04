@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
                             map.put("tag",tag.toLowerCase());
                             map.put("postId",postId);
 
-                            mHashTagRef.child(tag.toLowerCase()).setValue(map);
+                            mHashTagRef.child(tag.toLowerCase()).child(postId).setValue(map);
                         }
                     }
                     pd.dismiss();
