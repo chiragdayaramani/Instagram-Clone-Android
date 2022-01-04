@@ -36,6 +36,8 @@ dependencies {
     implementation "com.hendraanggrian.appcompat:socialview-commons:0.2" // auto-complete hashtag and mention
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
