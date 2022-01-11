@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_more"
+        android:id="@+id/more"
         android:layout_margin="15dp"/>
 
     <LinearLayout
@@ -25,7 +26,7 @@
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:id="@+id/profile_image"
+                android:id="@+id/image_profile"
                 android:src="@mipmap/ic_launcher"
                 android:layout_margin="5dp"
                 />
@@ -101,7 +102,7 @@
             android:textStyle="bold"
             android:text="Chirag D"
             android:id="@+id/author"
-            android:textColor="@color/design_default_color_primary_dark"
+            android:textColor="@color/colorPriamryDark"
             />
 
         <com.hendraanggrian.appcompat.widget.SocialTextView
