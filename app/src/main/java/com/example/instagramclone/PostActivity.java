@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.example.instagramclone.databinding.ActivityPostBinding;
@@ -24,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+import com.hendraanggrian.appcompat.socialview.Hashtag;
+import com.hendraanggrian.appcompat.widget.HashtagArrayAdapter;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
@@ -141,5 +144,12 @@ public class PostActivity extends AppCompatActivity {
             startActivity(new Intent(PostActivity.this,MainActivity2.class));
             finish();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        ArrayAdapter<Hashtag> hashtagArrayAdapter=new HashtagArrayAdapter<>(getApplicationContext());
     }
 }

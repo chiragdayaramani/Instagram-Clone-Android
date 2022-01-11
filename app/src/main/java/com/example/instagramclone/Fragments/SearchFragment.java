@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.instagramclone.Adapter.TagAdapter;
 import com.example.instagramclone.Adapter.UserAdapter;
 import com.example.instagramclone.Model.User;
 import com.example.instagramclone.R;
@@ -30,10 +32,18 @@ import java.util.List;
 
 public class SearchFragment extends Fragment {
 
-    private RecyclerView recyclerView;
+
     private SocialAutoCompleteTextView search_bar;
+
+    private RecyclerView recyclerView;
     private List<User> mUsers;
     private UserAdapter userAdapter;
+
+    private RecyclerView recyclerViewTags;
+    private List<String> mHashTags;
+    private List<String> getmHashTagsCount;
+    private TagAdapter tagAdapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +53,16 @@ public class SearchFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        recyclerViewTags=view.findViewById(R.id.recycler_view_tags);
+        recyclerViewTags.setHasFixedSize(true);
+        recyclerViewTags.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        mHashTags=new ArrayList<>();
+        getmHashTagsCount=new ArrayList<>();
+        tagAdapter=new TagAdapter(getContext(),mHashTags,getmHashTagsCount);
+        recyclerViewTags.setAdapter(tagAdapter);
+
+
         mUsers=new ArrayList<>();
         userAdapter=new UserAdapter(getContext(),mUsers,true);
         recyclerView.setAdapter(userAdapter);
@@ -50,6 +70,8 @@ public class SearchFragment extends Fragment {
         search_bar=view.findViewById(R.id.search_bar);
 
         readUsers();
+
+        readTags();
 
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -60,15 +82,38 @@ public class SearchFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchUser(s.toString());
+
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                filter(s.toString());
             }
         });
 
         return view;
+    }
+
+    private void readTags() {
+        FirebaseDatabase.getInstance().getReference().child("HashTags").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mHashTags.clear();
+                getmHashTagsCount.clear();
+
+                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    mHashTags.add(snapshot1.getKey());
+                    getmHashTagsCount.add(snapshot1.getChildrenCount()+"");
+                }
+
+                tagAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void readUsers() {
@@ -112,6 +157,23 @@ public class SearchFragment extends Fragment {
 
             }
         });
+    }
+
+    private void filter(String text){
+        List<String> mSearchTags=new ArrayList<>();
+        List<String> mSearchTagsCount=new ArrayList<>();
+
+        for(String s:mHashTags){
+            if(s.toLowerCase().contains(text.toLowerCase())){
+                mSearchTags.add(s);
+                mSearchTagsCount.add(getmHashTagsCount.get(mHashTags.indexOf(s)));
+
+            }
+        }
+
+        tagAdapter.filter(mSearchTags,mSearchTagsCount);
+        tagAdapter.notifyDataSetChanged();
+
     }
 
 }
