@@ -2,6 +2,8 @@ package com.example.instagramclone;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +11,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.instagramclone.Adapter.CommentAdapter;
+import com.example.instagramclone.Model.Comment;
 import com.example.instagramclone.Model.User;
 import com.example.instagramclone.databinding.ActivityCommentBinding;
 import com.example.instagramclone.databinding.ActivityLoginBinding;
@@ -22,7 +26,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -32,6 +38,10 @@ public class CommentActivity extends AppCompatActivity {
     private String authorId;
 
     FirebaseUser fUser;
+
+    private RecyclerView recyclerView;
+    private CommentAdapter adapter;
+    private List<Comment> commentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +58,14 @@ public class CommentActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        binding.recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        commentList=new ArrayList<>();
+        adapter=new CommentAdapter(this,commentList);
+        binding.recyclerView.setAdapter(adapter);
 
         Intent intent=getIntent();
         postId=intent.getStringExtra("postId");
@@ -66,7 +84,27 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
 
+        getComment();
 
+    }
+
+    private void getComment() {
+        FirebaseDatabase.getInstance().getReference().child("Comments").child(postId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                commentList.clear();
+                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    Comment comment=snapshot1.getValue(Comment.class);
+                    commentList.add(comment);
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void putComment() {
