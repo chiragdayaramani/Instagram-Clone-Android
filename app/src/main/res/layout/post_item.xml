@@ -68,7 +68,7 @@
                 android:layout_marginStart="10dp"
                 android:src="@drawable/ic_like" />
 
-            <androidx.constraintlayout.utils.widget.ImageFilterButton
+            <ImageView
                 android:id="@+id/comment"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -76,7 +76,7 @@
                 android:layout_toEndOf="@+id/like"
                 android:src="@drawable/ic_comment" />
 
-            <androidx.constraintlayout.utils.widget.ImageFilterButton
+            <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="10dp"
