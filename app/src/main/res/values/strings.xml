@@ -13,6 +13,11 @@
     <string name="description">Description</string>
     <string name="search">Search...</string>
     <string name="full_name">Full Name</string>
+    <string name="following">FOLLOWING</string>
+    <string name="chirag">Chirag</string>
+    <string name="posts">POSTS</string>
+    <string name="followers">FOLLOWERS</string>
+    <string name="edit_profile">Edit Profile</string>
 
 
 </resources>
