@@ -6,7 +6,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.instagramclone.Adapter.PhotoAdapter;
 import com.example.instagramclone.Model.Post;
 import com.example.instagramclone.Model.User;
 import com.example.instagramclone.R;
@@ -26,9 +30,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
+
+    private RecyclerView recyclerView;
+    private PhotoAdapter photoAdapter;
+    private List<Post> myPhotosList;
 
     private CircleImageView imageProfile;
     private ImageView options;
@@ -76,9 +89,17 @@ public class ProfileFragment extends Fragment {
         savedPictures=view.findViewById(R.id.saved_pictures);
         editProfile=view.findViewById(R.id.edit_profile);
 
+        recyclerView=view.findViewById(R.id.recycler_view_pictures);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),3));
+        myPhotosList=new ArrayList<>();
+        photoAdapter=new PhotoAdapter(getContext(),myPhotosList);
+        recyclerView.setAdapter(photoAdapter);
+
         userInfo();
         getFollowersAndFollowingCount();
         getPostCount();
+        myPhotos();
 
 
         if(profileId.equals(fUser.getUid())){
@@ -111,6 +132,29 @@ public class ProfileFragment extends Fragment {
 
 
         return view;
+    }
+
+    private void myPhotos() {
+        FirebaseDatabase.getInstance().getReference().child("Posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                myPhotosList.clear();
+                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    Post post=snapshot1.getValue(Post.class);
+                    if(post.getPublisher().equals(profileId)) {
+                        myPhotosList.add(post);
+                    }
+                }
+
+                Collections.reverse(myPhotosList);
+                photoAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void checkFollowingStatus() {
