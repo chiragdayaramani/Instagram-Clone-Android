@@ -57,7 +57,18 @@ public class MainActivity2 extends AppCompatActivity {
 
             }
         });
+        Bundle intent=getIntent().getExtras();
+        if(intent!=null){
+            String profilId=intent.getString("publisherId");
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
+            getSharedPreferences("PROFILE",MODE_PRIVATE).edit().putString("profileId",profilId).apply();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new ProfileFragment()).commit();
+
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_profile);
+        }
+        else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+        }
     }
 }

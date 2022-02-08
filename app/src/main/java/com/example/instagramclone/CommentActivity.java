@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
@@ -62,14 +63,15 @@ public class CommentActivity extends AppCompatActivity {
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-        commentList=new ArrayList<>();
-        adapter=new CommentAdapter(this,commentList);
-        binding.recyclerView.setAdapter(adapter);
-
         Intent intent=getIntent();
         postId=intent.getStringExtra("postId");
         postId=intent.getStringExtra("authorId");
+
+        commentList=new ArrayList<>();
+        adapter=new CommentAdapter(this,commentList,postId);
+        binding.recyclerView.setAdapter(adapter);
+
+
         fUser= FirebaseAuth.getInstance().getCurrentUser();
 
         getUserImage();
@@ -109,11 +111,17 @@ public class CommentActivity extends AppCompatActivity {
 
     private void putComment() {
         HashMap<String,Object> map=new HashMap<>();
+
+        DatabaseReference ref=FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
+        String id=ref.push().getKey();
+
+        map.put("id",id);
+
         map.put("comment",binding.addComment.getText().toString());
         map.put("publisher",fUser.getUid());
+        binding.addComment.setText("");
 
-        FirebaseDatabase.getInstance().getReference().child("Comments").child(postId)
-                .push().setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        ref.child(id).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())

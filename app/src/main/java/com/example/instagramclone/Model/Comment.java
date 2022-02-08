@@ -2,13 +2,26 @@ package com.example.instagramclone.Model;
 
 public class Comment {
     private String comment;
+    private String publisher;
+    private String id;
+    public Comment(String comment, String publisher, String id) {
+        this.comment = comment;
+        this.publisher = publisher;
+        this.id = id;
+    }
+
+
     public Comment() {
 
     }
 
-    public Comment(String comment, String publisher) {
-        this.comment = comment;
-        this.publisher = publisher;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getComment() {
@@ -28,5 +41,5 @@ public class Comment {
     }
 
 
-    private String publisher;
+
 }
