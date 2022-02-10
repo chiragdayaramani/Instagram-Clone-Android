@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment {
         }
         else {
             profileId = data;
+//            getContext().getSharedPreferences("PROFILE", Context.MODE_PRIVATE).edit().clear().apply();
         }
 
 
