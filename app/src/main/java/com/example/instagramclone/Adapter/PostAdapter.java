@@ -83,6 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         isLiked(post.getPostId(),holder.like);
         noOfLikes(post.getPostId(),holder.noOfLikes);
         getComments(post.getPostId(),holder.noOfComments);
+        isSaved(post.getPostId(),holder.save);
 
         holder.like.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +118,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         });
+
+        holder.save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.save.getTag().equals("save")){
+                    FirebaseDatabase.getInstance().getReference().child("Saves").child(firebaseUser.getUid()).child(post.getPostId()).setValue(true);
+                }
+                else{
+                    FirebaseDatabase.getInstance().getReference().child("Saves").child(firebaseUser.getUid()).child(post.getPostId()).removeValue();
+                }
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -205,4 +219,27 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
     }
+
+    private void isSaved(String postId, ImageView save) {
+        FirebaseDatabase.getInstance().getReference().child("Saves").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child(postId).exists()){
+                    save.setImageResource(R.drawable.ic_save_black);
+                    save.setTag("saved");
+                }
+                else{
+                    save.setImageResource(R.drawable.ic_save);
+                    save.setTag("save");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
 }

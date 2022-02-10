@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.instagramclone.Adapter.PhotoAdapter;
+import com.example.instagramclone.Adapter.PostAdapter;
 import com.example.instagramclone.Model.Post;
 import com.example.instagramclone.Model.User;
 import com.example.instagramclone.R;
@@ -38,6 +39,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
+
+    private RecyclerView recyclerViewSaves;
+    private PhotoAdapter postAdapter;
+    private List<Post> mySavedPosts;
 
     private RecyclerView recyclerView;
     private PhotoAdapter photoAdapter;
@@ -96,10 +101,20 @@ public class ProfileFragment extends Fragment {
         photoAdapter=new PhotoAdapter(getContext(),myPhotosList);
         recyclerView.setAdapter(photoAdapter);
 
+
+        recyclerViewSaves=view.findViewById(R.id.recycler_view_saved);
+        recyclerViewSaves.setHasFixedSize(true);
+        recyclerViewSaves.setLayoutManager(new GridLayoutManager(getContext(),3));
+        mySavedPosts=new ArrayList<>();
+        postAdapter=new PhotoAdapter(getContext(),mySavedPosts);
+        recyclerViewSaves.setAdapter(postAdapter);
+
+
         userInfo();
         getFollowersAndFollowingCount();
         getPostCount();
         myPhotos();
+        getSavedPosts();
 
 
         if(profileId.equals(fUser.getUid())){
@@ -130,8 +145,72 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        recyclerView.setVisibility(View.VISIBLE);
+        recyclerViewSaves.setVisibility(View.GONE);
+        savedPictures.setImageResource(R.drawable.ic_save);
+
+
+        myPictures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.setVisibility(View.VISIBLE);
+                recyclerViewSaves.setVisibility(View.GONE);
+                savedPictures.setImageResource(R.drawable.ic_save);
+            }
+        });
+
+        savedPictures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.setVisibility(View.GONE);
+                recyclerViewSaves.setVisibility(View.VISIBLE);
+                savedPictures.setImageResource(R.drawable.ic_save_black);
+            }
+        });
+
 
         return view;
+    }
+
+    private void getSavedPosts() {
+        List<String> savedIds=new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference().child("Saves").child(fUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    savedIds.add(snapshot1.getKey());
+                }
+                FirebaseDatabase.getInstance().getReference().child("Posts").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        mySavedPosts.clear();
+
+                        for(DataSnapshot snapshot1:snapshot.getChildren()){
+                            Post post=snapshot1.getValue(Post.class);
+
+                            for(String id:savedIds){
+                                if(post.getPostId().equals(id)){
+                                    mySavedPosts.add(post);
+                                }
+                            }
+                        }
+
+                        postAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void myPhotos() {
